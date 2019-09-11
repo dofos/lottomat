@@ -1,11 +1,11 @@
 package pl.devello.lottomat;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,10 @@ public class MainTest {
 
     private ByteArrayOutputStream byteOutputStream;
     private PrintStream stdOut;
-
+    @BeforeAll
+    static void seedTheRandomness() {
+        Main.setRandomGenerator(new Random(1));
+    }
     @BeforeEach
     void setupTheStdOut() {
         byteOutputStream = new ByteArrayOutputStream();
@@ -41,6 +44,34 @@ public class MainTest {
     void itPrintsMessageAboutLuckyNumbers() {
         Main.main(new String[]{});
 
-        assertEquals("Your happy numbers are:\n", byteOutputStream.toString());
+        assertTrue(byteOutputStream.toString().startsWith("Your happy numbers are:\n"));
     }
+    @Test
+    void nextItPrintsYourTenLuckyKenoNumbers() throws IOException {
+        Main.main(new String[]{});
+
+        ByteArrayInputStream b = new ByteArrayInputStream(byteOutputStream.toByteArray());
+        InputStreamReader reader = new InputStreamReader(b);
+
+        BufferedReader br = new BufferedReader(reader);
+        br.readLine();
+        String line = br.readLine();
+
+        assertEquals(10, line.split(" ").length);
+    }
+    @Test
+    void theNumbersCannotRepeat() throws IOException {
+        Main.main(new String[]{});
+
+        ByteArrayInputStream b = new ByteArrayInputStream(byteOutputStream.toByteArray());
+        InputStreamReader reader = new InputStreamReader(b);
+
+        BufferedReader br = new BufferedReader(reader);
+        br.readLine();
+        String line = br.readLine();
+        Set<String> targetSet = new HashSet<String>();
+        Collections.addAll(targetSet, line.split(" "));
+        assertEquals(10, targetSet.size());
+    }
+
 }
