@@ -1,8 +1,6 @@
 package pl.devello.lottomat;
 
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class Main {
     private static Random randomGenerator = null;
@@ -11,28 +9,22 @@ public class Main {
 
         return random;
     }
+
     public static void main(String[] args) {
         if (randomGenerator==null) {
             randomGenerator = new Random();
         }
         System.out.println("Your happy numbers are:");
-        List<String> luckyNumbers = randomGenerator.
-                ints().
-                map(
-                        (i)->{
-                            int luckyNo = Math.abs(i) % 70;
-                            luckyNo++;
 
-                            return luckyNo;
-                        }
-                ).
-                distinct().
-                limit(10).
-                sorted().
-                mapToObj((i)->String.format("%d", i)).
-                collect(
-                    Collectors.toList()
-                );
-        System.out.println(String.join(" ", luckyNumbers));
+        int noSets = args.length == 0 ? 1 : Integer.parseInt(args[0], 10);
+        int setSize = args.length <=1 ? 10: Integer.parseInt(args[1], 10);
+
+        new Lottomat(randomGenerator).
+            kenoLuckyNumbers(setSize, noSets).
+            forEach(
+                (set)->{
+                    System.out.println(String.join(" ", set));
+                }
+            );
     }
 }
